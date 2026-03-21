@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ALVIN // TACTICAL_COMMANDER_OS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700;900&amp;family=Manrope:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface": "#131315",
+              "inverse-primary": "#bd0d1d",
+              "tertiary": "#ffb0ca",
+              "on-tertiary-container": "#ffd0dd",
+              "on-tertiary-fixed": "#3e001f",
+              "on-error-container": "#ffdad6",
+              "on-error": "#690005",
+              "on-surface-variant": "#e5bdb9",
+              "tertiary-container": "#bd006a",
+              "surface-tint": "#ffb3ad",
+              "on-secondary-fixed": "#241a00",
+              "outline-variant": "#5c403d",
+              "on-primary-fixed-variant": "#930011",
+              "on-tertiary-fixed-variant": "#8d004e",
+              "tertiary-fixed-dim": "#ffb0ca",
+              "error": "#ffb4ab",
+              "surface-container": "#201f21",
+              "surface-container-high": "#2a2a2c",
+              "error-container": "#93000a",
+              "surface-container-highest": "#353437",
+              "secondary-container": "#af8d11",
+              "inverse-surface": "#e5e1e4",
+              "on-secondary-container": "#342800",
+              "on-tertiary": "#640035",
+              "on-surface": "#e5e1e4",
+              "primary-fixed": "#ffdad6",
+              "secondary": "#e9c349",
+              "surface-container-low": "#1c1b1d",
+              "surface-bright": "#39393b",
+              "primary-fixed-dim": "#ffb3ad",
+              "on-primary": "#680009",
+              "surface-variant": "#353437",
+              "on-background": "#e5e1e4",
+              "on-primary-container": "#ffd2ce",
+              "outline": "#ac8885",
+              "on-primary-fixed": "#410003",
+              "surface-dim": "#131315",
+              "surface-container-lowest": "#0e0e10",
+              "background": "#131315",
+              "inverse-on-surface": "#313032",
+              "on-secondary": "#3c2f00",
+              "primary-container": "#c1121f",
+              "tertiary-fixed": "#ffd9e3",
+              "on-secondary-fixed-variant": "#574500",
+              "primary": "#ffb3ad",
+              "secondary-fixed": "#ffe088",
+              "secondary-fixed-dim": "#e9c349"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Manrope"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .scanlines {
+            background: linear-gradient(to bottom, transparent 50%, rgba(193, 18, 31, 0.03) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+        .chamfer {
+            clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
+        }
+        .chamfer-sm {
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+        }
+        .glow-text {
+            text-shadow: 0 0 30px rgba(193, 18, 31, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
+<!-- Scanline Overlay -->
+<div class="fixed inset-0 z-[100] scanlines pointer-events-none"></div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#131315]/40 backdrop-blur-xl border-b border-[#5c403d]/20 shadow-[0_0_40px_rgba(147,0,10,0.05)]">
+<nav class="flex justify-between items-center px-12 py-6 max-w-full">
+<div class="text-3xl font-black bg-gradient-to-r from-[#c1121f] to-[#ffb0ca] bg-clip-text text-transparent hover:animate-pulse font-headline">
+                A
+            </div>
+<div class="hidden md:flex items-center gap-10 font-headline uppercase tracking-[0.2em] text-sm">
+<a class="text-[#ffb0ca] border-b-2 border-[#c1121f] pb-1" href="#">Home</a>
+<a class="text-[#e5bdb9] hover:text-[#e9c349] transition-colors duration-300 hover:skew-x-2" href="#">About Me</a>
+<a class="text-[#e5bdb9] hover:text-[#e9c349] transition-colors duration-300 hover:skew-x-2" href="#">Blog Articles</a>
+<a class="text-[#e5bdb9] hover:text-[#e9c349] transition-colors duration-300 hover:skew-x-2" href="#">Works</a>
+<button class="ml-4 text-[#e5bdb9] hover:text-[#e9c349] scale-95 active:bg-[#c1121f]/10 transition-transform">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+</button>
+</div>
+<!-- Mobile Menu Toggle (Simplified) -->
+<div class="md:hidden">
+<span class="material-symbols-outlined text-secondary">menu</span>
+</div>
+</nav>
+</header>
+<main class="relative pt-32 min-h-screen">
+<!-- Hero Section -->
+<section class="relative px-12 py-20 overflow-hidden">
+<!-- Background Ambient Glow -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-on-primary-fixed-variant/10 blur-[120px] rounded-full -z-10"></div>
+<div class="max-w-7xl mx-auto flex flex-col items-start gap-8">
+<!-- Data Brackets Header -->
+<div class="flex items-center gap-4">
+<span class="text-secondary font-headline text-[10px] tracking-widest uppercase border-l-2 border-secondary pl-2">System Status: Active</span>
+<span class="text-outline text-[10px] font-headline">001_PRIME_COMMAND</span>
+</div>
+<h1 class="font-headline font-black text-7xl md:text-9xl tracking-tighter leading-none glow-text">
+<span class="block text-on-surface">HI HERE IS</span>
+<span class="block bg-gradient-to-r from-primary-container to-tertiary bg-clip-text text-transparent uppercase">ALVIN</span>
+</h1>
+<div class="flex flex-col md:flex-row gap-12 mt-4 items-start md:items-end w-full">
+<div class="max-w-xl">
+<p class="text-on-surface-variant text-lg leading-relaxed font-light">
+                            Tactical interface designer and systems architect. Crafting high-precision digital experiences where technical excellence meets cinematic aesthetics. Specializing in data-dense environments and high-performance front-ends.
+                        </p>
+</div>
+<div class="flex gap-8 font-headline text-xs tracking-[0.3em] uppercase">
+<a class="group flex items-center gap-2 text-on-surface hover:text-secondary transition-all" href="#">
+<span class="w-2 h-2 bg-primary-container group-hover:bg-secondary rotate-45 transition-colors"></span>
+                            View Projects
+                        </a>
+<a class="group flex items-center gap-2 text-on-surface hover:text-secondary transition-all" href="#">
+<span class="w-2 h-2 bg-primary-container group-hover:bg-secondary rotate-45 transition-colors"></span>
+                            Contact Me
+                        </a>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<section class="px-12 py-24 bg-surface-container-low/50 relative">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Tactical Panel 1 -->
+<div class="md:col-span-8 bg-surface-container p-8 relative chamfer-sm border-l-4 border-secondary group hover:bg-surface-container-highest transition-colors">
+<div class="flex justify-between items-start mb-12">
+<span class="text-secondary font-headline text-[10px] tracking-widest">[ PROJECT_LOG ]</span>
+<span class="material-symbols-outlined text-outline" data-icon="settings_input_component">settings_input_component</span>
+</div>
+<h3 class="text-4xl font-headline font-bold mb-4">TACTICAL COMMANDER OS</h3>
+<p class="text-on-surface-variant max-w-lg mb-8">A conceptual operating system interface built for extreme data visibility and mission-critical decision making.</p>
+<div class="flex gap-4">
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] font-headline uppercase tracking-wider text-secondary">React</span>
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] font-headline uppercase tracking-wider text-secondary">WebGL</span>
+</div>
+</div>
+<!-- Technical Readout 2 -->
+<div class="md:col-span-4 bg-surface-container-highest p-8 relative flex flex-col justify-between border-b border-outline-variant/20">
+<div class="font-headline">
+<span class="text-primary-container text-[10px] tracking-widest block mb-2">SYSTEM_STATS</span>
+<div class="space-y-4">
+<div class="flex justify-between items-center border-b border-outline-variant/10 pb-2">
+<span class="text-on-surface-variant text-xs">COGNITION</span>
+<span class="text-secondary text-xs">98.2%</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant/10 pb-2">
+<span class="text-on-surface-variant text-xs">EFFICIENCY</span>
+<span class="text-secondary text-xs">A-RANK</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant text-xs">UPTIME</span>
+<span class="text-secondary text-xs">24/7/365</span>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<div class="h-1 w-full bg-outline-variant/20 rounded-full overflow-hidden">
+<div class="h-full w-2/3 bg-gradient-to-r from-primary-container to-tertiary"></div>
+</div>
+<span class="text-[10px] text-outline mt-2 block font-headline">DEPLOYMENT_PROGRESS</span>
+</div>
+</div>
+<!-- Glassmorphism Panel 3 -->
+<div class="md:col-span-4 bg-surface-variant/40 backdrop-blur-md p-8 chamfer-sm border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary-container mb-6 block" data-icon="bolt">bolt</span>
+<h4 class="text-xl font-headline font-bold mb-2">RAPID DEPLOY</h4>
+<p class="text-on-surface-variant text-sm">Automated pipeline systems for high-frequency updates and tactical refinements.</p>
+</div>
+<!-- Feature 4 -->
+<div class="md:col-span-8 bg-surface-container p-8 flex flex-col md:flex-row gap-8 items-center border-t-2 border-primary-container/20">
+<div class="w-full md:w-1/2">
+<h4 class="text-2xl font-headline font-bold mb-4">INTERFACE PRECISION</h4>
+<p class="text-on-surface-variant text-sm leading-relaxed">Leveraging the latest in geometric design principles to create interfaces that aren't just seen, but experienced as professional tools of the trade.</p>
+</div>
+<div class="w-full md:w-1/2 grid grid-cols-2 gap-2">
+<div class="h-20 bg-surface-container-highest chamfer-sm flex items-center justify-center text-outline-variant text-[10px] font-headline">MODULE_01</div>
+<div class="h-20 bg-surface-container-highest chamfer-sm flex items-center justify-center text-outline-variant text-[10px] font-headline">MODULE_02</div>
+<div class="h-20 bg-surface-container-highest chamfer-sm flex items-center justify-center text-outline-variant text-[10px] font-headline">MODULE_03</div>
+<div class="h-20 bg-surface-container-highest chamfer-sm flex items-center justify-center text-outline-variant text-[10px] font-headline">MODULE_04</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-[#5c403d]/20 py-12 bg-[#0e0e10]">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 gap-8">
+<div class="flex flex-col gap-2">
+<span class="text-[#c1121f] font-bold font-headline tracking-tighter text-xl">ALVIN</span>
+<p class="font-['Space_Grotesk'] text-[10px] tracking-widest uppercase text-[#e5bdb9]/60">© ALVIN // TACTICAL_COMMANDER_OS</p>
+</div>
+<div class="flex gap-12 font-['Space_Grotesk'] text-[10px] tracking-widest uppercase cursor-crosshair">
+<a class="text-[#e5bdb9]/60 hover:text-[#e9c349] transition-colors" href="#">Contact</a>
+<a class="text-[#e5bdb9]/60 hover:text-[#e9c349] transition-colors" href="#">Github</a>
+<a class="text-[#e5bdb9]/60 hover:text-[#e9c349] transition-colors" href="#">LinkedIn</a>
+<a class="text-[#e5bdb9]/60 hover:text-[#e9c349] transition-colors" href="#">Source</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-container text-sm" data-icon="verified">verified</span>
+<span class="text-outline text-[10px] font-headline uppercase tracking-widest">Auth: 77-Commander</span>
+</div>
+</div>
+</footer>
+<!-- Decorative Corner Marks -->
+<div class="fixed top-4 left-4 w-2 h-2 bg-primary-container/40 z-50"></div>
+<div class="fixed top-4 right-4 w-2 h-2 bg-primary-container/40 z-50"></div>
+<div class="fixed bottom-4 left-4 w-2 h-2 bg-primary-container/40 z-50"></div>
+<div class="fixed bottom-4 right-4 w-2 h-2 bg-primary-container/40 z-50"></div>
+</body></html>

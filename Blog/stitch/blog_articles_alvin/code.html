@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ALVIN // COMMANDER_LOG_FILE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#131315",
+                        "inverse-primary": "#bd0d1d",
+                        "tertiary": "#ffb0ca",
+                        "on-tertiary-container": "#ffd0dd",
+                        "on-tertiary-fixed": "#3e001f",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "on-surface-variant": "#e5bdb9",
+                        "tertiary-container": "#bd006a",
+                        "surface-tint": "#ffb3ad",
+                        "on-secondary-fixed": "#241a00",
+                        "outline-variant": "#5c403d",
+                        "on-primary-fixed-variant": "#930011",
+                        "on-tertiary-fixed-variant": "#8d004e",
+                        "tertiary-fixed-dim": "#ffb0ca",
+                        "error": "#ffb4ab",
+                        "surface-container": "#201f21",
+                        "surface-container-high": "#2a2a2c",
+                        "error-container": "#93000a",
+                        "surface-container-highest": "#353437",
+                        "secondary-container": "#af8d11",
+                        "inverse-surface": "#e5e1e4",
+                        "on-secondary-container": "#342800",
+                        "on-tertiary": "#640035",
+                        "on-surface": "#e5e1e4",
+                        "primary-fixed": "#ffdad6",
+                        "secondary": "#e9c349",
+                        "surface-container-low": "#1c1b1d",
+                        "surface-bright": "#39393b",
+                        "primary-fixed-dim": "#ffb3ad",
+                        "on-primary": "#680009",
+                        "surface-variant": "#353437",
+                        "on-background": "#e5e1e4",
+                        "on-primary-container": "#ffd2ce",
+                        "outline": "#ac8885",
+                        "on-primary-fixed": "#410003",
+                        "surface-dim": "#131315",
+                        "surface-container-lowest": "#0e0e10",
+                        "background": "#131315",
+                        "inverse-on-surface": "#313032",
+                        "on-secondary": "#3c2f00",
+                        "primary-container": "#c1121f",
+                        "tertiary-fixed": "#ffd9e3",
+                        "on-secondary-fixed-variant": "#574500",
+                        "primary": "#ffb3ad",
+                        "secondary-fixed": "#ffe088",
+                        "secondary-fixed-dim": "#e9c349"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chamfer-card {
+            clip-path: polygon(0 0, 95% 0, 100% 5%, 100% 100%, 5% 100%, 0 95%);
+        }
+        .text-glow-crimson {
+            text-shadow: 0 0 15px rgba(193, 18, 31, 0.4);
+        }
+        .header-gradient {
+            background: linear-gradient(to right, #c1121f, #ffb0ca);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#131315]/40 backdrop-blur-xl border-b border-[#5c403d]/20 shadow-[0_0_40px_rgba(147,0,10,0.05)]">
+<div class="flex justify-between items-center px-12 py-6 max-w-full">
+<div class="text-3xl font-black bg-gradient-to-r from-[#c1121f] to-[#ffb0ca] bg-clip-text text-transparent hover:animate-pulse font-headline">
+                A
+            </div>
+<div class="hidden md:flex gap-8 items-center font-['Space_Grotesk'] uppercase tracking-[0.2em] text-sm">
+<a class="text-[#e5bdb9] hover:text-[#e9c349] transition-colors duration-300 hover:skew-x-2 transition-all" href="#">Home</a>
+<a class="text-[#e5bdb9] hover:text-[#e9c349] transition-colors duration-300 hover:skew-x-2 transition-all" href="#">About Me</a>
+<a class="text-[#ffb0ca] border-b-2 border-[#c1121f] pb-1 hover:skew-x-2 transition-all" href="#">Blog Articles</a>
+<a class="text-[#e5bdb9] hover:text-[#e9c349] transition-colors duration-300 hover:skew-x-2 transition-all" href="#">Works</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#e5bdb9] scale-95 active:bg-[#c1121f]/10 transition-transform cursor-pointer" data-icon="terminal">terminal</span>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto min-h-screen">
+<!-- Header Section -->
+<header class="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6 border-l-4 border-primary-container pl-6">
+<div>
+<p class="font-label text-secondary tracking-[0.3em] uppercase text-xs mb-2">ARCHIVE_ACCESS // SECTOR_7</p>
+<h1 class="text-5xl md:text-7xl font-black font-headline header-gradient leading-tight">Blog Articles</h1>
+</div>
+<div class="text-right font-label text-[10px] text-on-surface-variant/40 space-y-1">
+<p>STATUS: ONLINE</p>
+<p>SYNC_VERSION: 2.4.0_REV</p>
+</div>
+</header>
+<!-- Articles Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<!-- Article Card 1 -->
+<article class="group relative bg-surface-container-low p-8 border border-outline-variant/20 transition-all duration-500 hover:border-primary-container/40 hover:shadow-[0_0_50px_rgba(193,18,31,0.1)] hover:-skew-x-1">
+<div class="absolute top-0 right-0 p-4 font-label text-[10px] text-secondary/30">
+                    [01_LOG_FILE]
+                </div>
+<div class="flex items-center gap-3 mb-6">
+<span class="px-2 py-1 bg-secondary/10 border border-secondary/20 text-secondary font-label text-[10px] tracking-widest uppercase">Tactical UI</span>
+<span class="text-on-surface-variant/40 font-label text-[10px]">2023.11.04</span>
+</div>
+<h2 class="text-2xl font-headline font-bold text-on-surface mb-4 group-hover:text-tertiary transition-colors">The Neural Interface: Designing for Zero Latency</h2>
+<p class="text-on-surface-variant leading-relaxed mb-8 line-clamp-3">Exploring the physiological limits of human-machine interaction within high-stress combat environments. How visual hierarchy saves lives in the cockpit.</p>
+<div class="flex justify-between items-center">
+<button class="font-label text-xs uppercase tracking-widest text-primary hover:text-secondary flex items-center gap-2 transition-colors">
+                        Read Entry <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="flex gap-1">
+<div class="w-1 h-1 bg-primary-container"></div>
+<div class="w-1 h-1 bg-primary-container/40"></div>
+<div class="w-1 h-1 bg-primary-container/10"></div>
+</div>
+</div>
+</article>
+<!-- Article Card 2 -->
+<article class="group relative bg-surface-container-low p-8 border border-outline-variant/20 transition-all duration-500 hover:border-primary-container/40 hover:shadow-[0_0_50px_rgba(193,18,31,0.1)] hover:skew-x-1">
+<div class="absolute top-0 right-0 p-4 font-label text-[10px] text-secondary/30">
+                    [02_LOG_FILE]
+                </div>
+<div class="flex items-center gap-3 mb-6">
+<span class="px-2 py-1 bg-secondary/10 border border-secondary/20 text-secondary font-label text-[10px] tracking-widest uppercase">System Architecture</span>
+<span class="text-on-surface-variant/40 font-label text-[10px]">2023.10.28</span>
+</div>
+<h2 class="text-2xl font-headline font-bold text-on-surface mb-4 group-hover:text-tertiary transition-colors">Monolithic vs Mesh: The Tactical Commander OS</h2>
+<p class="text-on-surface-variant leading-relaxed mb-8 line-clamp-3">A deep dive into the backend infrastructure supporting the current tactical display systems. Stability over aesthetic, always.</p>
+<div class="flex justify-between items-center">
+<button class="font-label text-xs uppercase tracking-widest text-primary hover:text-secondary flex items-center gap-2 transition-colors">
+                        Read Entry <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="flex gap-1">
+<div class="w-1 h-1 bg-secondary"></div>
+<div class="w-1 h-1 bg-secondary/40"></div>
+<div class="w-1 h-1 bg-secondary/10"></div>
+</div>
+</div>
+</article>
+<!-- Article Card 3 -->
+<article class="group relative bg-surface-container-low p-8 border border-outline-variant/20 transition-all duration-500 hover:border-primary-container/40 hover:shadow-[0_0_50px_rgba(193,18,31,0.1)] hover:-skew-x-1">
+<div class="absolute top-0 right-0 p-4 font-label text-[10px] text-secondary/30">
+                    [03_LOG_FILE]
+                </div>
+<div class="flex items-center gap-3 mb-6">
+<span class="px-2 py-1 bg-secondary/10 border border-secondary/20 text-secondary font-label text-[10px] tracking-widest uppercase">Visual Language</span>
+<span class="text-on-surface-variant/40 font-label text-[10px]">2023.10.15</span>
+</div>
+<h2 class="text-2xl font-headline font-bold text-on-surface mb-4 group-hover:text-tertiary transition-colors">Crimson Aesthetics: Why Red Works in the Dark</h2>
+<p class="text-on-surface-variant leading-relaxed mb-8 line-clamp-3">Psychological impact of high-energy color palettes on operator focus and fatigue. The science behind the Red Comet aesthetic.</p>
+<div class="flex justify-between items-center">
+<button class="font-label text-xs uppercase tracking-widest text-primary hover:text-secondary flex items-center gap-2 transition-colors">
+                        Read Entry <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="flex gap-1">
+<div class="w-1 h-1 bg-primary-container"></div>
+<div class="w-1 h-1 bg-primary-container/40"></div>
+<div class="w-1 h-1 bg-primary-container/10"></div>
+</div>
+</div>
+</article>
+<!-- Article Card 4 -->
+<article class="group relative bg-surface-container-low p-8 border border-outline-variant/20 transition-all duration-500 hover:border-primary-container/40 hover:shadow-[0_0_50px_rgba(193,18,31,0.1)] hover:skew-x-1">
+<div class="absolute top-0 right-0 p-4 font-label text-[10px] text-secondary/30">
+                    [04_LOG_FILE]
+                </div>
+<div class="flex items-center gap-3 mb-6">
+<span class="px-2 py-1 bg-secondary/10 border border-secondary/20 text-secondary font-label text-[10px] tracking-widest uppercase">Field Reports</span>
+<span class="text-on-surface-variant/40 font-label text-[10px]">2023.09.22</span>
+</div>
+<h2 class="text-2xl font-headline font-bold text-on-surface mb-4 group-hover:text-tertiary transition-colors">Optimization Patterns for Real-Time HUDs</h2>
+<p class="text-on-surface-variant leading-relaxed mb-8 line-clamp-3">Reducing cognitive load through predictive UI elements and sensory data clustering. A developer's perspective on combat interfaces.</p>
+<div class="flex justify-between items-center">
+<button class="font-label text-xs uppercase tracking-widest text-primary hover:text-secondary flex items-center gap-2 transition-colors">
+                        Read Entry <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="flex gap-1">
+<div class="w-1 h-1 bg-secondary"></div>
+<div class="w-1 h-1 bg-secondary/40"></div>
+<div class="w-1 h-1 bg-secondary/10"></div>
+</div>
+</div>
+</article>
+</div>
+<!-- Technical Readout Decorative Section -->
+<section class="mt-32 p-12 border border-outline-variant/10 bg-surface-container-lowest/50 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary-container to-transparent opacity-30"></div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="space-y-4">
+<h3 class="font-label text-xs text-secondary tracking-widest uppercase">System_Metrics</h3>
+<div class="space-y-2 text-[10px] font-mono text-on-surface-variant/60">
+<div class="flex justify-between border-b border-outline-variant/5 pb-1"><span>ENTRIES_TOTAL</span><span>142</span></div>
+<div class="flex justify-between border-b border-outline-variant/5 pb-1"><span>ACTIVE_SESSIONS</span><span>12</span></div>
+<div class="flex justify-between border-b border-outline-variant/5 pb-1"><span>LAST_POST_HASH</span><span>#C1121F</span></div>
+</div>
+</div>
+<div class="md:col-span-2 flex items-center justify-center">
+<div class="w-full h-12 bg-surface-container-highest/20 border-x border-primary-container/20 flex items-center px-4">
+<div class="w-full bg-surface-container-highest h-[2px] relative">
+<div class="absolute left-1/4 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-primary-container bg-surface flex items-center justify-center">
+<div class="w-1 h-1 bg-primary-container animate-ping"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-[#5c403d]/20 py-12 bg-[#0e0e10]">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 gap-8">
+<div class="text-[#c1121f] font-bold font-headline uppercase tracking-widest">
+                © ALVIN // TACTICAL_COMMANDER_OS
+            </div>
+<div class="flex gap-8 font-['Space_Grotesk'] text-[10px] tracking-widest uppercase cursor-crosshair">
+<a class="text-[#e5bdb9]/60 hover:text-[#e9c349] transition-colors" href="#">Contact</a>
+<a class="text-[#e5bdb9]/60 hover:text-[#e9c349] transition-colors" href="#">Github</a>
+<a class="text-[#e5bdb9]/60 hover:text-[#e9c349] transition-colors" href="#">LinkedIn</a>
+<a class="text-[#e5bdb9]/60 hover:text-[#e9c349] transition-colors" href="#">Source</a>
+</div>
+<div class="text-[#e9c349] font-label text-[10px] flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+                SYSTEM_STABLE
+            </div>
+</div>
+</footer>
+</body></html>
