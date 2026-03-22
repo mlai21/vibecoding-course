@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SplashCursor from '../../components/SplashCursor';
+import FloatingLines from '../../components/FloatingLines';
 
 const MainLayout = () => {
   const { pathname } = useLocation();
@@ -10,8 +11,32 @@ const MainLayout = () => {
 
   return (
     <div className="relative min-h-screen bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
-      <SplashCursor />
+      {isHomePage && (
+        <SplashCursor
+          SIM_RESOLUTION={64}
+          DYE_RESOLUTION={512}
+          PRESSURE_ITERATIONS={12}
+          SPLAT_FORCE={3500}
+          COLOR_UPDATE_SPEED={6}
+          SHADING={false}
+        />
+      )}
       {isHomePage && <div className="fixed inset-0 z-[100] scanlines pointer-events-none" aria-hidden="true" />}
+
+      <div className="fixed inset-0 z-0 pointer-events-none opacity-55" aria-hidden="true">
+        <FloatingLines
+          linesGradient={['#1e0a0f', '#2b0f15', '#3a1620']}
+          enabledWaves={['top', 'middle', 'bottom']}
+          lineCount={[3, 5, 4]}
+          lineDistance={[22, 26, 22]}
+          animationSpeed={0.18}
+          interactive={false}
+          parallax={false}
+          mixBlendMode="soft-light"
+          maxFPS={24}
+          quality={1}
+        />
+      </div>
 
       <div className="fixed inset-0 pointer-events-none -z-10 opacity-20" aria-hidden="true">
         <div
@@ -28,7 +53,7 @@ const MainLayout = () => {
       <div className="relative z-10">
         <Navbar />
 
-        <main className={`${isHomePage ? 'pt-28' : 'pt-32'} min-h-screen`}>
+        <main className={`${isHomePage ? 'pt-24' : 'pt-28'} min-h-screen`}>
           <Outlet />
         </main>
 

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import ElectricBorder from '../../components/ElectricBorder';
 
 const articles = [
   {
@@ -48,6 +49,8 @@ const articles = [
 ];
 
 function BlogArticles() {
+  const [activeCardId, setActiveCardId] = useState(null);
+
   return (
     <div className="px-6 md:px-12 pb-24 max-w-7xl mx-auto min-h-screen">
       <header className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6 border-l-4 border-primary-container pl-6">
@@ -63,34 +66,45 @@ function BlogArticles() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {articles.map((article) => (
-          <article
-            className={`group relative bg-surface-container-low p-8 border border-outline-variant/20 transition-all duration-500 hover:border-primary-container/40 hover:shadow-[0_0_50px_rgba(193,18,31,0.1)] ${article.skew}`}
+          <ElectricBorder
             key={article.id}
+            active={activeCardId === article.id}
+            color="#c1121f"
+            speed={0.4}
+            chaos={0.045}
+            borderRadius={0}
+            className={`${article.skew} transition-transform duration-500`}
           >
-            <div className="absolute top-0 right-0 p-4 font-label text-[10px] text-secondary/30">[{article.id}]</div>
+            <article
+              className="group relative bg-surface-container-low p-8 border border-outline-variant/20 transition-all duration-500 hover:border-primary-container/40 hover:shadow-[0_0_50px_rgba(193,18,31,0.1)]"
+              onMouseEnter={() => setActiveCardId(article.id)}
+              onMouseLeave={() => setActiveCardId((current) => (current === article.id ? null : current))}
+            >
+              <div className="absolute top-0 right-0 p-4 font-label text-[10px] text-secondary/30">[{article.id}]</div>
 
-            <div className="flex items-center gap-3 mb-6">
-              <span className="px-2 py-1 bg-secondary/10 border border-secondary/20 text-secondary font-label text-[10px] tracking-widest uppercase">{article.tag}</span>
-              <span className="text-on-surface-variant/40 font-label text-[10px]">{article.date}</span>
-            </div>
-
-            <h2 className="text-2xl font-headline font-bold text-on-surface mb-4 group-hover:text-tertiary transition-colors">{article.title}</h2>
-            <p className="text-on-surface-variant leading-relaxed mb-8">{article.desc}</p>
-
-            <div className="flex justify-between items-center">
-              <button className="font-label text-xs uppercase tracking-widest text-primary hover:text-secondary flex items-center gap-2 transition-colors">
-                Read Entry
-                <span className="material-symbols-outlined text-sm" aria-hidden="true">
-                  arrow_forward
-                </span>
-              </button>
-              <div className="flex gap-1">
-                <div className={`w-1 h-1 ${article.dotStrong}`} />
-                <div className={`w-1 h-1 ${article.dotMid}`} />
-                <div className={`w-1 h-1 ${article.dotWeak}`} />
+              <div className="flex items-center gap-3 mb-6">
+                <span className="px-2 py-1 bg-secondary/10 border border-secondary/20 text-secondary font-label text-[10px] tracking-widest uppercase">{article.tag}</span>
+                <span className="text-on-surface-variant/40 font-label text-[10px]">{article.date}</span>
               </div>
-            </div>
-          </article>
+
+              <h2 className="text-2xl font-headline font-bold text-on-surface mb-4 group-hover:text-tertiary transition-colors">{article.title}</h2>
+              <p className="text-on-surface-variant leading-relaxed mb-8">{article.desc}</p>
+
+              <div className="flex justify-between items-center">
+                <button className="font-label text-xs uppercase tracking-widest text-primary hover:text-secondary flex items-center gap-2 transition-colors">
+                  Read Entry
+                  <span className="material-symbols-outlined text-sm" aria-hidden="true">
+                    arrow_forward
+                  </span>
+                </button>
+                <div className="flex gap-1">
+                  <div className={`w-1 h-1 ${article.dotStrong}`} />
+                  <div className={`w-1 h-1 ${article.dotMid}`} />
+                  <div className={`w-1 h-1 ${article.dotWeak}`} />
+                </div>
+              </div>
+            </article>
+          </ElectricBorder>
         ))}
       </div>
 

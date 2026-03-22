@@ -3,10 +3,10 @@ import React from 'react';
 function Home() {
   return (
     <>
-      <section className="relative px-6 md:px-12 pt-4 md:pt-8 pb-20 overflow-hidden">
+      <section className="relative px-6 md:px-12 pt-0 pb-20 overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-on-primary-fixed-variant/10 blur-[120px] rounded-full -z-10" />
 
-        <div className="max-w-7xl mx-auto flex flex-col items-start gap-8">
+        <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-start gap-8">
           <div className="flex items-center gap-4">
             <span className="text-secondary font-headline text-[10px] tracking-widest uppercase border-l-2 border-secondary pl-2">
               System Status: Active

@@ -1,18 +1,25 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-const links = ['Contact', 'Github', 'LinkedIn', 'Source'];
+const links = [
+  { label: 'Contact', href: '#' },
+  { label: 'Github', href: '#' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/qianye-tang-3a545b168/' },
+  { label: 'Source', href: '#' },
+];
 
 function FooterLinks() {
   return (
     <div className="flex gap-8 md:gap-12">
       {links.map((item) => (
         <a
-          key={item}
-          href="#"
+          key={item.label}
+          href={item.href}
+          rel={item.href.startsWith('http') ? 'noreferrer' : undefined}
+          target={item.href.startsWith('http') ? '_blank' : undefined}
           className="font-['Space_Grotesk'] text-[10px] tracking-widest uppercase text-[#e5bdb9]/60 hover:text-[#e9c349] transition-colors cursor-crosshair"
         >
-          {item}
+          {item.label}
         </a>
       ))}
     </div>
