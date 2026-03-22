@@ -6,6 +6,7 @@ import uuid
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from chat_store import (
@@ -30,6 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="相遇地点助手")
+app.mount("/storage", StaticFiles(directory=str(STORAGE_DIR), check_dir=False), name="storage")
 
 
 class ChatMessage(BaseModel):
@@ -71,7 +73,7 @@ def _extract_text_from_transcript(transcript_data: dict) -> str:
 def startup_event() -> None:
     ensure_storage_dir()
     init_db()
-    logger.info("[Startup] 初始化完成 storage=%s", STORAGE_DIR)
+    logger.info("[Startup] 初始化完成 storage=%s static_route=/storage", STORAGE_DIR)
 
 
 def _normalize_text(value: str) -> str:
@@ -167,7 +169,8 @@ async def delete_conversation_endpoint(conversation_id: str):
 async def process_voice(audio: UploadFile = File(...)):
     """
     接收前端上传的音频文件，保存到 Storage；
-    调用百炼 ASR 转写 -> Qwen3.5-Plus 槽位提取 -> 高德相遇地点推荐；
+    调用百炼 ASR 转写 -> Qwen3.5-Plus 槽位提取 -> 高德相遇地点推荐 ->
+    Qwen3.5-flash 整合文案 -> 百炼 Qwen TTS 语音合成；
     各环节结果均保存到 Storage。
     """
     logger.info("[Process] 收到音频上传请求")
@@ -195,6 +198,7 @@ async def process_voice(audio: UploadFile = File(...)):
     slots_path = None
     meeting_result = {}
     meeting_path = None
+    summary_path = None
 
     # 1. ASR 转写
     try:
@@ -221,6 +225,8 @@ async def process_voice(audio: UploadFile = File(...)):
             "asr_path": str(asr_path) if asr_path else None,
             "slots": {},
             "meeting": {},
+            "integrated_text": "",
+            "tts_url": None,
         }
 
     # 2. Qwen3.5-Plus 槽位提取
@@ -253,6 +259,8 @@ async def process_voice(audio: UploadFile = File(...)):
             "slots": slots,
             "slots_path": str(slots_path) if slots_path else None,
             "meeting": {},
+            "integrated_text": "",
+            "tts_url": None,
         }
 
     # 3. 高德相遇地点推荐
@@ -274,6 +282,50 @@ async def process_voice(audio: UploadFile = File(...)):
         logger.exception("[Amap] 高德接口调用失败: %s", e)
         raise HTTPException(status_code=500, detail=f"高德接口调用失败: {str(e)}")
 
+    # 4. Qwen3.5-flash 整合高德结果为自然语言
+    integrated_text = ""
+    try:
+        from services.qwen_chat import integrate_meeting_result
+
+        integrated_text = integrate_meeting_result(asr_text, slots, meeting_result)
+        summary_path = storage / f"{prefix}_integrated.txt"
+        summary_path.write_text(integrated_text, encoding="utf-8")
+        logger.info("[Integrate] 整合完成 integrated_len=%d", len(integrated_text))
+    except ValueError as e:
+        logger.error("[Integrate] 配置错误: %s", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.exception("[Integrate] Qwen 整合失败: %s", e)
+        # 降级：用高德结果手动拼接
+        parts = []
+        suggestions = meeting_result.get("suggestions", [])
+        if suggestions:
+            parts.append("根据您说的位置，为您推荐以下见面地点：")
+            for i, s in enumerate(suggestions[:5], 1):
+                name = s.get("name", "未知")
+                addr = s.get("address", "")
+                dist = s.get("distance", "")
+                parts.append(f"{i}. {name}" + (f"（{addr}）" if addr else "") + (f"，距中点{dist}米" if dist else ""))
+        else:
+            parts.append("未能找到合适的见面地点，请检查地址是否准确。")
+        integrated_text = "\n".join(parts)
+        summary_path = storage / f"{prefix}_integrated.txt"
+        summary_path.write_text(integrated_text, encoding="utf-8")
+
+    # 5. 百炼 Qwen TTS 语音合成
+    tts_url = None
+    tts_path = None
+    if integrated_text:
+        try:
+            from services.bailian_tts import synthesize_to_file
+
+            tts_url, tts_path = synthesize_to_file(integrated_text, output_prefix=prefix)
+            logger.info("[TTS] 语音合成完成 tts_url=%s", tts_url)
+        except ValueError as e:
+            logger.warning("[TTS] 配置错误，跳过 TTS: %s", e)
+        except Exception as e:
+            logger.exception("[TTS] 语音合成失败: %s", e)
+
     logger.info("[Process] 全流程完成 filename=%s", filename)
     has_suggestions = bool(meeting_result.get("suggestions"))
     return {
@@ -287,6 +339,10 @@ async def process_voice(audio: UploadFile = File(...)):
         "slots_path": str(slots_path) if slots_path else None,
         "meeting": meeting_result,
         "meeting_path": str(meeting_path) if meeting_path else None,
+        "integrated_text": integrated_text,
+        "summary_path": str(summary_path) if summary_path else None,
+        "tts_url": tts_url,
+        "tts_api_url": tts_url,
     }
 
 
@@ -325,6 +381,34 @@ async def asr_only(audio: UploadFile = File(...)):
     except Exception as e:
         logger.exception("[ASR] 转写失败: %s", e)
         raise HTTPException(status_code=500, detail=f"ASR 转写失败: {str(e)}")
+
+
+class TtsRequest(BaseModel):
+    text: str = Field(..., min_length=1, max_length=8000, description="待合成的文本")
+
+
+@app.post("/tts")
+async def tts_endpoint(req: TtsRequest):
+    """
+    文本转语音，使用 qwen3-tts-flash。返回可播放的音频 URL。
+    """
+    text = _normalize_text(req.text)
+    if not text:
+        raise HTTPException(status_code=400, detail="文本不能为空")
+
+    try:
+        from services.bailian_tts import synthesize_to_file
+
+        prefix = uuid.uuid4().hex
+        tts_url, _ = synthesize_to_file(text, output_prefix=prefix)
+        logger.info("[TTS] 合成完成 tts_url=%s", tts_url)
+        return {"tts_url": tts_url, "ok": True}
+    except ValueError as e:
+        logger.error("[TTS] 配置错误: %s", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.exception("[TTS] 语音合成失败: %s", e)
+        raise HTTPException(status_code=500, detail=f"语音合成失败: {str(e)}")
 
 
 @app.post("/chat")

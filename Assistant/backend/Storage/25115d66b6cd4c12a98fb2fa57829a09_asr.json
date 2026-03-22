@@ -1,0 +1,58 @@
+{
+  "file_url": "http://dashscope-file-mgr.oss-cn-beijing.aliyuncs.com/dashscope-instant/ea9f60441526aca489b437a565229e3c/2026-03-22/c2a07627-f94c-4bc6-a98e-31ec2afd6419/25115d66b6cd4c12a98fb2fa57829a09.webm?Expires=1774327055&OSSAccessKeyId=LTAI5t64cnuuVx7xndFH9ULk&Signature=4o0qQ2lReCK08z1O%2BoEUMMrsniQ%3D",
+  "properties": {
+    "audio_format": "opus",
+    "channels": [
+      0
+    ],
+    "original_sampling_rate": 48000,
+    "original_duration_in_milliseconds": 6720
+  },
+  "transcripts": [
+    {
+      "channel_id": 0,
+      "content_duration_in_milliseconds": 2600,
+      "text": "我现在在北京西客站。",
+      "sentences": [
+        {
+          "begin_time": 2640,
+          "end_time": 5240,
+          "text": "我现在在北京西客站。",
+          "sentence_id": 1,
+          "words": [
+            {
+              "begin_time": 2640,
+              "end_time": 3080,
+              "text": "我现在",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 3080,
+              "end_time": 4000,
+              "text": "在北京",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 4280,
+              "end_time": 4480,
+              "text": "西",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 4480,
+              "end_time": 4640,
+              "text": "客",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 4640,
+              "end_time": 5240,
+              "text": "站",
+              "punctuation": "。"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

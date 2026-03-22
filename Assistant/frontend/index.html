@@ -27,9 +27,8 @@
         <header class="chat-header">
           <div class="chat-title-wrap">
             <h2 id="conversationTitle">新对话</h2>
-            <p class="subtitle">语音转写 · 文字输入</p>
+            <p class="subtitle">语音见面点推荐 · 文字输入</p>
           </div>
-          <button type="button" class="edit-title-btn" id="editTitleBtn">重命名</button>
         </header>
 
         <section class="messages" id="messages" aria-live="polite">
@@ -51,6 +50,17 @@
           <p class="input-hint" id="inputHint"></p>
         </section>
       </main>
+    </div>
+
+    <div class="dialog-backdrop hidden" id="deleteDialog" aria-hidden="true">
+      <section class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="deleteDialogTitle" aria-describedby="deleteDialogMessage">
+        <h3 id="deleteDialogTitle">删除会话</h3>
+        <p id="deleteDialogMessage">确认删除此会话吗？删除后无法恢复。</p>
+        <div class="dialog-actions">
+          <button type="button" class="dialog-btn dialog-cancel" id="deleteDialogCancelBtn">取消</button>
+          <button type="button" class="dialog-btn dialog-danger" id="deleteDialogConfirmBtn">删除</button>
+        </div>
+      </section>
     </div>
 
     <script type="module" src="/js/app.js"></script>

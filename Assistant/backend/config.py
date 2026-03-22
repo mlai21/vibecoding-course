@@ -36,5 +36,9 @@ DASHSCOPE_BASE = (
 # 百炼 Qwen 槽位提取模型
 DASHSCOPE_QWEN_MODEL = os.environ.get("DASHSCOPE_QWEN_MODEL", "qwen3.5-plus")
 
+# 百炼 Qwen TTS 语音合成模型与音色
+DASHSCOPE_TTS_MODEL = os.environ.get("DASHSCOPE_TTS_MODEL", "qwen3-tts-flash")
+DASHSCOPE_TTS_VOICE = os.environ.get("DASHSCOPE_TTS_VOICE", "Cherry")
+
 # 高德地图配置
 AMAP_KEY = os.environ.get("AMAP_KEY", "")
