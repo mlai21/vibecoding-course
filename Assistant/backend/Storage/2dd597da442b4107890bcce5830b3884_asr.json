@@ -1,0 +1,58 @@
+{
+  "file_url": "http://dashscope-file-mgr.oss-cn-beijing.aliyuncs.com/dashscope-instant/ea9f60441526aca489b437a565229e3c/2026-03-22/8b14a2d1-7e38-4dfa-85d2-83e0b343f1a0/2dd597da442b4107890bcce5830b3884.webm?Expires=1774324199&OSSAccessKeyId=LTAI5t64cnuuVx7xndFH9ULk&Signature=orq%2FldrYgLCZbY4hreHButpCg%2Bg%3D",
+  "properties": {
+    "audio_format": "opus",
+    "channels": [
+      0
+    ],
+    "original_sampling_rate": 48000,
+    "original_duration_in_milliseconds": 3240
+  },
+  "transcripts": [
+    {
+      "channel_id": 0,
+      "content_duration_in_milliseconds": 2160,
+      "text": "那边有什么推荐餐厅吗？",
+      "sentences": [
+        {
+          "begin_time": 920,
+          "end_time": 3080,
+          "text": "那边有什么推荐餐厅吗？",
+          "sentence_id": 1,
+          "words": [
+            {
+              "begin_time": 920,
+              "end_time": 1320,
+              "text": "那边",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 1320,
+              "end_time": 1760,
+              "text": "有什么",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 1760,
+              "end_time": 2080,
+              "text": "推荐",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 2080,
+              "end_time": 2480,
+              "text": "餐厅",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 2480,
+              "end_time": 3080,
+              "text": "吗",
+              "punctuation": "？"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

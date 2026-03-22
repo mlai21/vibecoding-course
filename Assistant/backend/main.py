@@ -5,8 +5,20 @@ import os
 import uuid
 from pathlib import Path
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from pydantic import BaseModel, Field
 
+from chat_store import (
+    create_conversation,
+    get_conversation,
+    init_db,
+    list_conversations,
+    list_messages,
+    rename_conversation,
+    soft_delete_conversation,
+    add_message,
+    try_auto_title,
+)
 from config import PORT, STORAGE_DIR
 
 _log_level = getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper(), logging.INFO)
@@ -18,6 +30,27 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="相遇地点助手")
+
+
+class ChatMessage(BaseModel):
+    role: str = Field(..., description="user | assistant | system")
+    content: str = Field(..., description="消息内容")
+
+
+class ChatRequest(BaseModel):
+    messages: list[ChatMessage] = Field(..., description="对话历史")
+
+
+class CreateConversationRequest(BaseModel):
+    title: str | None = Field(default=None, max_length=120, description="会话标题，可选")
+
+
+class UpdateConversationRequest(BaseModel):
+    title: str = Field(..., min_length=1, max_length=120, description="新的会话标题")
+
+
+class CreateConversationMessageRequest(BaseModel):
+    content: str = Field(..., min_length=1, max_length=8000, description="用户输入文本")
 
 
 def ensure_storage_dir() -> Path:
@@ -32,6 +65,102 @@ def _extract_text_from_transcript(transcript_data: dict) -> str:
     for t in transcript_data.get("transcripts", []):
         texts.append(t.get("text", ""))
     return "".join(texts).strip()
+
+
+@app.on_event("startup")
+def startup_event() -> None:
+    ensure_storage_dir()
+    init_db()
+    logger.info("[Startup] 初始化完成 storage=%s", STORAGE_DIR)
+
+
+def _normalize_text(value: str) -> str:
+    return (value or "").strip()
+
+
+@app.post("/conversations")
+async def create_conversation_endpoint(req: CreateConversationRequest | None = None):
+    title = req.title if req else None
+    conversation = create_conversation(title=title)
+    return {"ok": True, "conversation": conversation}
+
+
+@app.get("/conversations")
+async def list_conversations_endpoint(
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+):
+    items = list_conversations(limit=limit, offset=offset)
+    return {"ok": True, "items": items}
+
+
+@app.get("/conversations/{conversation_id}/messages")
+async def get_conversation_messages_endpoint(conversation_id: str):
+    conversation = get_conversation(conversation_id)
+    if not conversation:
+        raise HTTPException(status_code=404, detail="会话不存在或已删除")
+    items = list_messages(conversation_id)
+    return {"ok": True, "conversation": conversation, "items": items}
+
+
+@app.post("/conversations/{conversation_id}/messages")
+async def create_conversation_message_endpoint(
+    conversation_id: str,
+    req: CreateConversationMessageRequest,
+):
+    conversation = get_conversation(conversation_id)
+    if not conversation:
+        raise HTTPException(status_code=404, detail="会话不存在或已删除")
+
+    user_text = _normalize_text(req.content)
+    if not user_text:
+        raise HTTPException(status_code=400, detail="消息内容不能为空")
+
+    user_message = add_message(conversation_id=conversation_id, role="user", content=user_text)
+    try_auto_title(conversation_id)
+
+    try:
+        from services.qwen_chat import chat
+
+        history = list_messages(conversation_id)
+        model_messages = [{"role": m["role"], "content": m["content"]} for m in history]
+        reply = chat(model_messages)
+        assistant_text = _normalize_text(reply) or "抱歉，我暂时无法给出有效回复。"
+    except ValueError as e:
+        logger.error("[Chat] 配置错误: %s", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.exception("[Chat] 对话失败: %s", e)
+        raise HTTPException(status_code=500, detail=f"对话失败: {str(e)}")
+
+    assistant_message = add_message(conversation_id=conversation_id, role="assistant", content=assistant_text)
+    updated_conversation = get_conversation(conversation_id)
+    return {
+        "ok": True,
+        "conversation": updated_conversation,
+        "user_message": user_message,
+        "assistant_message": assistant_message,
+    }
+
+
+@app.patch("/conversations/{conversation_id}")
+async def update_conversation_endpoint(conversation_id: str, req: UpdateConversationRequest):
+    title = _normalize_text(req.title)
+    if not title:
+        raise HTTPException(status_code=400, detail="标题不能为空")
+
+    conversation = rename_conversation(conversation_id, title)
+    if not conversation:
+        raise HTTPException(status_code=404, detail="会话不存在或已删除")
+    return {"ok": True, "conversation": conversation}
+
+
+@app.delete("/conversations/{conversation_id}")
+async def delete_conversation_endpoint(conversation_id: str):
+    success = soft_delete_conversation(conversation_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="会话不存在或已删除")
+    return {"ok": True}
 
 
 @app.post("/process-voice")
@@ -146,8 +275,9 @@ async def process_voice(audio: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"高德接口调用失败: {str(e)}")
 
     logger.info("[Process] 全流程完成 filename=%s", filename)
+    has_suggestions = bool(meeting_result.get("suggestions"))
     return {
-        "message": "音频已保存，ASR 转写完成，已推荐相遇地点",
+        "message": "音频已保存，ASR 转写完成，已推荐相遇地点" if has_suggestions else "音频已保存，ASR 转写完成，但未能找到附近见面地点（可能是地理编码或周边无 POI）",
         "saved": True,
         "filename": filename,
         "path": str(filepath),
@@ -158,6 +288,63 @@ async def process_voice(audio: UploadFile = File(...)):
         "meeting": meeting_result,
         "meeting_path": str(meeting_path) if meeting_path else None,
     }
+
+
+@app.post("/asr")
+async def asr_only(audio: UploadFile = File(...)):
+    """
+    仅做 ASR 转写，返回转写文本。供聊天界面语音输入使用。
+    """
+    logger.info("[ASR] 收到音频上传请求")
+    if not audio.filename and not audio.content_type:
+        raise HTTPException(status_code=400, detail="请上传音频文件")
+
+    ext = Path(audio.filename or "audio").suffix or ".webm"
+    filename = f"{uuid.uuid4().hex}{ext}"
+    storage = ensure_storage_dir()
+    filepath = storage / filename
+
+    try:
+        content = await audio.read()
+        filepath.write_bytes(content)
+    except Exception as e:
+        logger.exception("[ASR] 保存音频失败")
+        raise HTTPException(status_code=500, detail=f"保存失败: {str(e)}")
+
+    prefix = filepath.stem
+    try:
+        from services.bailian_asr import transcribe_and_save
+
+        transcript_data, asr_path = transcribe_and_save(filepath, output_prefix=prefix)
+        asr_text = _extract_text_from_transcript(transcript_data)
+        logger.info("[ASR] 转写完成 asr_text=%r", asr_text)
+        return {"text": asr_text, "ok": True}
+    except ValueError as e:
+        logger.error("[ASR] 配置错误: %s", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.exception("[ASR] 转写失败: %s", e)
+        raise HTTPException(status_code=500, detail=f"ASR 转写失败: {str(e)}")
+
+
+@app.post("/chat")
+async def chat_endpoint(req: ChatRequest):
+    """
+    与 AI 助手对话，使用 Qwen3.5-Plus 模型。
+    """
+    logger.info("[Chat] 收到对话请求 messages_count=%d", len(req.messages))
+    try:
+        from services.qwen_chat import chat
+
+        messages = [{"role": m.role, "content": m.content} for m in req.messages]
+        reply = chat(messages)
+        return {"reply": reply, "ok": True}
+    except ValueError as e:
+        logger.error("[Chat] 配置错误: %s", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.exception("[Chat] 对话失败: %s", e)
+        raise HTTPException(status_code=500, detail=f"对话失败: {str(e)}")
 
 
 if __name__ == "__main__":

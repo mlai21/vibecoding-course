@@ -18,6 +18,9 @@ BASE_DIR = Path(__file__).resolve().parent
 STORAGE_DIR_NAME = os.environ.get("STORAGE_DIR", "Storage")
 STORAGE_DIR = BASE_DIR / STORAGE_DIR_NAME
 
+# 聊天会话 SQLite 文件路径
+CHAT_DB_PATH = BASE_DIR / os.environ.get("CHAT_DB_PATH", "Storage/chat_history.db")
+
 # 百炼平台配置
 DASHSCOPE_API_KEY = os.environ.get("DASHSCOPE_API_KEY", "")
 DASHSCOPE_ASR_MODEL = os.environ.get("DASHSCOPE_ASR_MODEL", "fun-asr")

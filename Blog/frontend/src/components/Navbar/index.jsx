@@ -1,47 +1,51 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import PillNav from '../PillNav';
 
 const navItems = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/about', label: 'About Me' },
-  { to: '/blog', label: 'Blog Articles' },
-  { to: '/works', label: 'Works' },
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About Me' },
+  { href: '/blog', label: 'Blog Articles' },
+  { href: '/works', label: 'Works' },
 ];
 
-const navLinkClassName = ({ isActive }) =>
-  [
-    "font-['Space_Grotesk'] uppercase tracking-[0.2em] text-sm transition-all duration-300",
-    isActive
-      ? 'text-[#ffb0ca] border-b-2 border-[#c1121f] pb-1'
-      : 'text-[#e5bdb9] hover:text-[#e9c349] hover:skew-x-2',
-  ].join(' ');
+const logoSvg = `data:image/svg+xml;utf8,${encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#c1121f"/>
+        <stop offset="1" stop-color="#ffb0ca"/>
+      </linearGradient>
+    </defs>
+    <rect width="64" height="64" rx="32" fill="#0f0d12"/>
+    <text x="32" y="42" text-anchor="middle" font-size="38" font-family="Space Grotesk, sans-serif" font-weight="800" fill="url(#g)">A</text>
+  </svg>
+`)}`;
+
+const getActiveHref = (pathname) => {
+  const found = navItems.find((item) => pathname === item.href || (item.href !== '/' && pathname.startsWith(`${item.href}/`)));
+  return found?.href ?? '/';
+};
 
 function Navbar() {
+  const { pathname } = useLocation();
+
   return (
     <header className="fixed top-0 w-full z-50 bg-[#131315]/40 backdrop-blur-xl border-b border-[#5c403d]/20 shadow-[0_0_40px_rgba(147,0,10,0.05)]">
-      <nav className="flex justify-between items-center px-6 md:px-12 py-6 max-w-full">
-        <Link className="text-3xl font-black bg-gradient-to-r from-[#c1121f] to-[#ffb0ca] bg-clip-text text-transparent hover:animate-pulse font-headline" to="/">
-          A
-        </Link>
-
-        <div className="hidden md:flex items-center gap-10">
-          {navItems.map((item) => (
-            <NavLink key={item.to} className={navLinkClassName} end={item.end} to={item.to}>
-              {item.label}
-            </NavLink>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button className="material-symbols-outlined hidden md:inline-flex text-[#e5bdb9] scale-95 active:bg-[#c1121f]/10 transition-transform" aria-label="Open terminal">
-            terminal
-          </button>
-
-          <button className="material-symbols-outlined text-secondary md:hidden" aria-label="Open menu">
-            menu
-          </button>
-        </div>
-      </nav>
+      <div className="max-w-7xl mx-auto px-3 md:px-6 py-3">
+        <PillNav
+          logo={logoSvg}
+          logoAlt="Alvin"
+          items={navItems}
+          activeHref={getActiveHref(pathname)}
+          className="mx-auto"
+          baseColor="#0f0d12"
+          pillColor="#17121b"
+          pillTextColor="#e8d9d5"
+          hoveredPillTextColor="#0f0d12"
+          initialLoadAnimation={false}
+        />
+      </div>
     </header>
   );
 }

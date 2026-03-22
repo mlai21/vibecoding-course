@@ -1,0 +1,58 @@
+{
+  "file_url": "http://dashscope-file-mgr.oss-cn-beijing.aliyuncs.com/dashscope-instant/ea9f60441526aca489b437a565229e3c/2026-03-22/8e0d4f13-0844-4f49-bf08-caba8d30c91c/10e82a9e0a354135b4e899ab146992f0.webm?Expires=1774322556&OSSAccessKeyId=LTAI5t64cnuuVx7xndFH9ULk&Signature=KeTndV%2F2CEVIxgLHjwofDmBxIbA%3D",
+  "properties": {
+    "audio_format": "opus",
+    "channels": [
+      0
+    ],
+    "original_sampling_rate": 48000,
+    "original_duration_in_milliseconds": 1740
+  },
+  "transcripts": [
+    {
+      "channel_id": 0,
+      "content_duration_in_milliseconds": 720,
+      "text": "因为我现在到这一步。",
+      "sentences": [
+        {
+          "begin_time": 960,
+          "end_time": 1680,
+          "text": "因为我现在到这一步。",
+          "sentence_id": 1,
+          "words": [
+            {
+              "begin_time": 960,
+              "end_time": 1160,
+              "text": "因为我",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 1160,
+              "end_time": 1320,
+              "text": "现在",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 1320,
+              "end_time": 1440,
+              "text": "到",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 1440,
+              "end_time": 1520,
+              "text": "这",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 1520,
+              "end_time": 1680,
+              "text": "一步",
+              "punctuation": "。"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

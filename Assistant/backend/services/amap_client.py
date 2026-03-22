@@ -5,6 +5,7 @@
 """
 import logging
 import os
+import time
 from urllib.parse import urlencode
 
 import requests
@@ -41,7 +42,10 @@ def geocode(address: str, city: str = None) -> tuple[float, float] | None:
         params["city"] = city
     url = f"https://restapi.amap.com/v3/geocode/geo?{urlencode(params)}"
     logger.debug("[Amap] 地理编码 request address=%r", address)
+    t0 = time.perf_counter()
     resp = requests.get(url, timeout=10)
+    elapsed_ms = (time.perf_counter() - t0) * 1000
+    logger.info("[Amap] 地理编码耗时 %.0fms address=%r", elapsed_ms, address)
     resp.raise_for_status()
     data = resp.json()
     if data.get("status") != "1" or not data.get("geocodes"):
@@ -78,7 +82,10 @@ def search_around(lon: float, lat: float, keywords: str = "咖啡|餐厅|商场"
         "offset": 10,
     }
     url = f"https://restapi.amap.com/v3/place/around?{urlencode(params)}"
+    t0 = time.perf_counter()
     resp = requests.get(url, timeout=10)
+    elapsed_ms = (time.perf_counter() - t0) * 1000
+    logger.info("[Amap] 周边搜索耗时 %.0fms location=(%.4f, %.4f)", elapsed_ms, lon, lat)
     resp.raise_for_status()
     data = resp.json()
     if data.get("status") != "1" or "pois" not in data:
@@ -93,6 +100,20 @@ def search_around(lon: float, lat: float, keywords: str = "咖啡|餐厅|商场"
             "type": p.get("type", ""),
         })
     return pois
+
+
+# 常见城市名，用于从地址中推断城市（限定地理编码范围，避免「国贸」等歧义地址匹配到错误城市）
+_CITY_NAMES = ("北京", "上海", "广州", "深圳", "杭州", "成都", "武汉", "西安", "南京", "苏州", "天津", "重庆", "长沙", "青岛", "厦门", "宁波", "东莞", "佛山", "沈阳", "大连", "济南", "郑州", "哈尔滨", "昆明", "南宁", "福州", "石家庄", "南昌", "长春", "贵阳", "太原", "乌鲁木齐", "兰州", "银川", "海口", "拉萨", "呼和浩特")
+
+
+def _extract_city(address: str) -> str | None:
+    """从地址字符串中提取城市名。"""
+    if not address:
+        return None
+    for city in _CITY_NAMES:
+        if city in address:
+            return city
+    return None
 
 
 def get_meeting_suggestions(my_location: str, friend_location: str) -> dict:
@@ -117,8 +138,12 @@ def get_meeting_suggestions(my_location: str, friend_location: str) -> dict:
         "errors": [],
     }
 
-    coord1 = geocode(my_location)
-    coord2 = geocode(friend_location)
+    # 推断城市：若任一方地址含城市名，用该城市限定地理编码，避免「国贸」等匹配到错误城市
+    city_hint = _extract_city(my_location) or _extract_city(friend_location)
+
+    t_total = time.perf_counter()
+    coord1 = geocode(my_location, city=city_hint)
+    coord2 = geocode(friend_location, city=city_hint)
 
     if not coord1:
         result["errors"].append(f"无法解析「我的位置」: {my_location}")
@@ -146,6 +171,11 @@ def get_meeting_suggestions(my_location: str, friend_location: str) -> dict:
     logger.info("[Amap] 计算中点 mid=(%.4f, %.4f) 开始周边搜索", mid_lon, mid_lat)
     suggestions = search_around(mid_lon, mid_lat)
     result["suggestions"] = suggestions[:5]  # 最多 5 条
-    logger.info("[Amap] 周边搜索完成 suggestions_count=%d names=%s", len(result["suggestions"]), [s["name"] for s in result["suggestions"]])
-
+    total_ms = (time.perf_counter() - t_total) * 1000
+    logger.info(
+        "[Amap] 相遇地点推荐全链路耗时 %.0fms suggestions_count=%d names=%s",
+        total_ms,
+        len(result["suggestions"]),
+        [s["name"] for s in result["suggestions"]],
+    )
     return result

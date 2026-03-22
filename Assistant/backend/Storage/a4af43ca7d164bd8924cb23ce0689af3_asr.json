@@ -1,0 +1,76 @@
+{
+  "file_url": "http://dashscope-file-mgr.oss-cn-beijing.aliyuncs.com/dashscope-instant/ea9f60441526aca489b437a565229e3c/2026-03-22/51ef9005-c5f2-4bdb-b0e7-604dbc787a01/a4af43ca7d164bd8924cb23ce0689af3.webm?Expires=1774324255&OSSAccessKeyId=LTAI5t64cnuuVx7xndFH9ULk&Signature=8zj2wowcLP7HfIXKn04O%2BN%2Fz4NU%3D",
+  "properties": {
+    "audio_format": "opus",
+    "channels": [
+      0
+    ],
+    "original_sampling_rate": 48000,
+    "original_duration_in_milliseconds": 2760
+  },
+  "transcripts": [
+    {
+      "channel_id": 0,
+      "content_duration_in_milliseconds": 1600,
+      "text": "打浦桥在哪个区来着？",
+      "sentences": [
+        {
+          "begin_time": 1120,
+          "end_time": 2720,
+          "text": "打浦桥在哪个区来着？",
+          "sentence_id": 1,
+          "words": [
+            {
+              "begin_time": 1120,
+              "end_time": 1320,
+              "text": "打",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 1320,
+              "end_time": 1480,
+              "text": "浦",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 1480,
+              "end_time": 1640,
+              "text": "桥",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 1640,
+              "end_time": 1840,
+              "text": "在",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 1840,
+              "end_time": 2080,
+              "text": "哪个",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 2080,
+              "end_time": 2280,
+              "text": "区",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 2280,
+              "end_time": 2360,
+              "text": "来",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 2360,
+              "end_time": 2720,
+              "text": "着",
+              "punctuation": "？"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

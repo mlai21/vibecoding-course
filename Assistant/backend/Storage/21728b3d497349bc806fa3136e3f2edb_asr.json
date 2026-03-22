@@ -1,0 +1,76 @@
+{
+  "file_url": "http://dashscope-file-mgr.oss-cn-beijing.aliyuncs.com/dashscope-instant/ea9f60441526aca489b437a565229e3c/2026-03-22/6c6209bc-663f-446a-8ca8-a6b427254712/21728b3d497349bc806fa3136e3f2edb.webm?Expires=1774322163&OSSAccessKeyId=LTAI5t64cnuuVx7xndFH9ULk&Signature=OySnUk1Lg961ePkzXGzw%2BeBmsdw%3D",
+  "properties": {
+    "audio_format": "opus",
+    "channels": [
+      0
+    ],
+    "original_sampling_rate": 48000,
+    "original_duration_in_milliseconds": 5340
+  },
+  "transcripts": [
+    {
+      "channel_id": 0,
+      "content_duration_in_milliseconds": 2640,
+      "text": "我在北京西单，朋友在国贸。",
+      "sentences": [
+        {
+          "begin_time": 2600,
+          "end_time": 5240,
+          "text": "我在北京西单，朋友在国贸。",
+          "sentence_id": 1,
+          "words": [
+            {
+              "begin_time": 2600,
+              "end_time": 3160,
+              "text": "我在",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 3160,
+              "end_time": 3520,
+              "text": "北京",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 3520,
+              "end_time": 3720,
+              "text": "西",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 3720,
+              "end_time": 3920,
+              "text": "单",
+              "punctuation": "，"
+            },
+            {
+              "begin_time": 4080,
+              "end_time": 4360,
+              "text": "朋友",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 4360,
+              "end_time": 4480,
+              "text": "在",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 4480,
+              "end_time": 4640,
+              "text": "国",
+              "punctuation": ""
+            },
+            {
+              "begin_time": 4640,
+              "end_time": 5240,
+              "text": "贸",
+              "punctuation": "。"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

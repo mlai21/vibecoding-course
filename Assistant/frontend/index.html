@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>相遇地点助手</title>
+    <title>AI 助手 · 语音 · 文字</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -11,43 +11,44 @@
   </head>
   <body>
     <div class="app">
-      <header class="header">
-        <div class="header-badge" aria-hidden="true">语音 · AI</div>
-        <h1>相遇地点助手</h1>
-        <p class="subtitle">说出你和朋友的位置，为你推荐合适的见面地点</p>
-      </header>
+      <aside class="sidebar">
+        <div class="sidebar-head">
+          <div>
+            <p class="sidebar-eyebrow">语音 · 文字 · AI</p>
+            <h1>AI 助手</h1>
+          </div>
+          <button type="button" class="new-conversation-btn" id="newConversationBtn">新建</button>
+        </div>
+        <div class="conversation-list" id="conversationList" aria-label="历史会话"></div>
+        <div class="conversation-empty hidden" id="conversationEmpty">暂无历史会话</div>
+      </aside>
 
-      <main class="main">
-        <section class="record-section">
-          <div class="record-card">
-            <div class="record-hint">
-              <div class="mic-visual" aria-hidden="true">
-                <span class="mic-ring"></span>
-                <span class="mic-core"></span>
-              </div>
-              <p class="hint-main">点击下方按钮开始录音，用语音描述你和朋友各自的位置</p>
-              <p class="hint-example">例如：「我在北京西单，朋友在国贸」</p>
-            </div>
+      <main class="chat-shell">
+        <header class="chat-header">
+          <div class="chat-title-wrap">
+            <h2 id="conversationTitle">新对话</h2>
+            <p class="subtitle">语音转写 · 文字输入</p>
+          </div>
+          <button type="button" class="edit-title-btn" id="editTitleBtn">重命名</button>
+        </header>
 
-            <button type="button" class="record-btn" id="recordBtn" aria-label="开始录音">
-              <span class="record-btn-icon"></span>
-              <span class="record-btn-text">开始录音</span>
+        <section class="messages" id="messages" aria-live="polite">
+          <div class="messages-placeholder" id="placeholder">
+            <p>说点什么或输入文字开始对话</p>
+          </div>
+        </section>
+
+        <section class="input-area">
+          <div class="input-row">
+            <button type="button" class="mic-btn" id="micBtn" aria-label="语音输入" title="语音输入">
+              <span class="mic-btn-icon"></span>
+            </button>
+            <textarea class="text-input" id="textInput" placeholder="输入消息…" rows="1" maxlength="4000"></textarea>
+            <button type="button" class="send-btn" id="sendBtn" aria-label="发送" title="发送">
+              <span class="send-btn-icon"></span>
             </button>
           </div>
-        </section>
-
-        <section class="status-section" id="statusSection" aria-live="polite">
-          <div class="status-content" id="statusContent"></div>
-        </section>
-
-        <section class="result-section" id="resultSection" hidden>
-          <div class="result-header">
-            <span class="result-badge">推荐结果</span>
-            <h2 class="sr-only">播放推荐语音</h2>
-          </div>
-          <div class="result-audio">
-            <audio id="resultAudio" controls></audio>
-          </div>
+          <p class="input-hint" id="inputHint"></p>
         </section>
       </main>
     </div>
